@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gemini Simple Chat</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif; }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #2d3748; /* slate-800 */ }
+    ::-webkit-scrollbar-thumb { background: #4a5568; /* slate-600 */ }
+    ::-webkit-scrollbar-thumb:hover { background: #718096; /* slate-500 */ }
+  </style>
+<script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "react": "https://esm.sh/react@^19.1.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.6.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="bg-slate-800">
+  <div id="root"></div>
+  <script>
+    // Mock process.env for client-side API key access as per instructions
+    // In a real build setup, this would be handled by a build tool (e.g., Webpack DefinePlugin, Vite)
+    // For this environment, we assume API_KEY might be set globally or via a script tag before this app runs.
+    // If it's not set, the app will show an error.
+    if (typeof process === 'undefined') {
+      window.process = { env: {} };
+    } else if (typeof process.env === 'undefined') {
+      window.process.env = {};
+    }
+    // To test, you can manually set it in your browser console before the app loads:
+    // process = { env: { API_KEY: "YOUR_GEMINI_API_KEY" } }; 
+    // Or include a script tag in head: <script>window.process = { env: { API_KEY: "YOUR_ACTUAL_API_KEY" } };</script>
+    window.process.env.API_KEY = "AIzaSyC0cXknAVgsxDCRrWBl1ha957_42gS5tNQ";
+  </script>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
