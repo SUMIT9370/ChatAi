@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { GoogleGenAI, Chat } from "@google/genai";
 import type { GenerateContentResponse } from "@google/genai"; // Only type import for response
@@ -8,6 +7,14 @@ import ChatInput from './components/ChatInput';
 import SparkleIcon from './components/icons/SparkleIcon';
 // LoadingDots is imported by ChatMessageItem and ChatInput if needed
 
+const BACKGROUND_IMAGE = '/brain-bg.jpg'; // Place the image in the public folder as brain-bg.jpg
+
+const FONT_OPTIONS = [
+  { label: 'Orbitron', value: 'Orbitron, sans-serif' },
+  { label: 'Roboto', value: 'Roboto, sans-serif' },
+  { label: 'Default', value: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif' },
+];
+
 const App: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessageData[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true); // Start true until init attempt
@@ -16,6 +23,7 @@ const App: React.FC = () => {
   const [activeAiMessageId, setActiveAiMessageId] = useState<number | null>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const apiKey = process.env.API_KEY;
+  const [font, setFont] = useState(FONT_OPTIONS[0].value);
 
   useEffect(() => {
     if (!apiKey) {
@@ -125,16 +133,19 @@ const App: React.FC = () => {
   const errorAlreadyInLastMessage = error && lastMessage && lastMessage.role === MessageRole.AI && lastMessage.text.includes(error);
   const showBannerError = error && !errorAlreadyInLastMessage;
 
-
   return (
-    <div className="flex flex-col h-screen bg-slate-800 text-slate-100">
-      <header className="bg-slate-900 p-4 shadow-md flex items-center space-x-2 fixed top-0 left-0 right-0 z-20">
-        <SparkleIcon className="w-8 h-8 text-pink-400" />
-        <h1 className="text-xl font-semibold text-slate-50">Gemini Simple Chat</h1>
-      </header>
-
+    <div className="flex flex-col h-screen text-slate-100 font-sans relative" style={{
+      backgroundImage: `linear-gradient(rgba(19,19,20,0.92), rgba(19,19,20,0.92)), url('/brain-bg.jpg')`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+    }}>
+      {/* Topbar */}
+      <div className="fixed top-0 left-0 right-0 z-20 h-14 flex items-center justify-center bg-[#18181b]/80 backdrop-blur-md shadow-md">
+        <span className="text-2xl font-bold tracking-wide text-white">ChatAi</span>
+      </div>
       {showBannerError && (
-        <div className="bg-red-500 text-white p-3 text-center fixed top-16 left-0 right-0 z-10 flex justify-between items-center">
+        <div className="bg-red-500 text-white p-3 text-center fixed top-14 left-0 right-0 z-30 flex justify-between items-center">
           <p>{error}</p>
           <button 
             onClick={() => setError(null)} 
@@ -148,8 +159,14 @@ const App: React.FC = () => {
 
       <div 
         ref={chatContainerRef} 
-        className={`flex-grow p-6 overflow-y-auto space-y-4 bg-slate-700 mt-16 ${showBannerError ? 'pt-12' : ''}`} // Adjusted padding for fixed header and potential banner
+        className={`flex-grow p-6 overflow-y-auto space-y-4 pt-8 ${showBannerError ? 'mt-24' : 'mt-14'}`}
       >
+        {messages.length === 0 && !isLoading && (
+          <div className="flex flex-col items-center justify-center h-full text-slate-400">
+            <h1 className="text-4xl font-medium text-slate-100">Hello, I'm Gemini</h1>
+            <p className="text-lg">How can I help you today?</p>
+          </div>
+        )}
         {messages.map((msg) => (
           <ChatMessageItem 
             key={msg.id} 
@@ -157,15 +174,17 @@ const App: React.FC = () => {
             isActiveStreamTarget={msg.id === activeAiMessageId}
           />
         ))}
-        {/* If initial loading is true and no messages yet, you could show a full page loader */}
         {isLoading && messages.length === 0 && !error && (
              <div className="flex justify-center items-center h-full">
-                <p>Initializing AI, please wait...</p> {/* Or a spinner component */}
+                <p>Initializing AI, please wait...</p>
              </div>
         )}
       </div>
 
       <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading} />
+      <div className="w-full flex justify-center items-center pb-2">
+        <span className="text-xs text-slate-400 text-center">developed by SUMit</span>
+      </div>
     </div>
   );
 };

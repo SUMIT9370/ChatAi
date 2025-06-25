@@ -1,77 +1,52 @@
-
 import React from 'react';
 import { ChatMessageData, MessageRole } from '../types';
 import UserIcon from './icons/UserIcon';
 import SparkleIcon from './icons/SparkleIcon';
-import LoadingDots from './LoadingDots'; // Import LoadingDots
+import LoadingDots from './LoadingDots';
 
 interface ChatMessageItemProps {
   message: ChatMessageData;
-  isActiveStreamTarget?: boolean; // New prop
+  isActiveStreamTarget: boolean;
 }
 
 const ChatMessageItem: React.FC<ChatMessageItemProps> = ({ message, isActiveStreamTarget }) => {
   const isUser = message.role === MessageRole.USER;
 
-  const renderTextWithLinks = (text: string): React.ReactNode => {
-    const parts = text.split(/(\[.*?\]\(.*?\)|```[\s\S]*?```)/g); // Split by [text](url) or ```code```
-    return parts.map((part, index) => {
-      if (!part) return null;
+  const containerClasses = isUser ? 'justify-end' : 'justify-start';
+  const bubbleClasses = isUser
+    ? 'bg-[#333537] rounded-2xl'
+    : 'bg-transparent';
 
-      const linkMatch = part.match(/^\[(.*?)\]\((.*?)\)$/);
-      if (linkMatch) {
-        return (
-          <a
-            key={index}
-            href={linkMatch[2]}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-400 hover:text-blue-300 underline"
-          >
-            {linkMatch[1]}
-          </a>
-        );
-      }
-      
-      const codeBlockMatch = part.match(/^```([\s\S]*?)```$/);
-      if (codeBlockMatch) {
-        const codeContent = codeBlockMatch[1].trim();
-        return (
-          <pre key={index} className="bg-slate-800 p-2 rounded-md my-2 overflow-x-auto text-sm">
-            <code>{codeContent}</code>
-          </pre>
-        );
-      }
-      return <span key={index}>{part}</span>;
+  const renderTextWithLinks = (text: string): React.ReactNode => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const parts = text.split(urlRegex);
+
+    return parts.map((part, index) => {
+        if (urlRegex.test(part)) {
+            return <a key={index} href={part} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{part}</a>;
+        }
+        return part;
     });
   };
 
   return (
-    <div className={`flex mb-4 ${isUser ? 'justify-end' : 'justify-start'}`}>
-      <div className={`flex items-start gap-3 max-w-xl ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
-        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${isUser ? 'bg-indigo-500' : 'bg-pink-500'} text-white`}>
-          {isUser ? <UserIcon className="w-5 h-5" /> : <SparkleIcon className="w-5 h-5" />}
+    <div className={`flex items-start space-x-3 ${containerClasses}`}>
+      {!isUser && (
+        <div className="w-8 h-8 flex-shrink-0">
+          <SparkleIcon className="w-8 h-8 text-blue-400" />
         </div>
-        <div
-          className={`px-4 py-3 rounded-lg shadow ${
-            isUser ? 'bg-indigo-600 text-white rounded-br-none' : 'bg-slate-600 text-slate-100 rounded-bl-none'
-          }`}
-        >
-          {isUser ? (
-            <div className="prose prose-sm prose-invert max-w-none whitespace-pre-wrap break-words">
-              {renderTextWithLinks(message.text)}
-            </div>
-          ) : ( // AI message
-            isActiveStreamTarget && message.text === '' ? (
-              <LoadingDots />
-            ) : (
-              <div className="prose prose-sm prose-invert max-w-none whitespace-pre-wrap break-words">
-                {renderTextWithLinks(message.text)}
-              </div>
-            )
-          )}
+      )}
+      <div className={`p-3 ${bubbleClasses}`}>
+        <div className="prose prose-sm prose-invert max-w-none whitespace-pre-wrap break-words">
+          {renderTextWithLinks(message.text)}
         </div>
+        {isActiveStreamTarget && <LoadingDots />}
       </div>
+      {isUser && (
+        <div className="w-8 h-8 flex-shrink-0">
+          <UserIcon />
+        </div>
+      )}
     </div>
   );
 };

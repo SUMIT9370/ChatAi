@@ -1,14 +1,21 @@
-
 import React from 'react';
 
+// Modern AI Face Icon (friendly, futuristic)
 const SparkleIcon: React.FC<{ className?: string }> = ({ className }) => (
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    viewBox="0 0 24 24" 
-    fill="currentColor" 
-    className={className || "w-6 h-6"}
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 48 48"
+    fill="none"
+    className={className || "w-8 h-8"}
   >
-    <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354l-4.502 2.825c-.995.608-2.23-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z" clipRule="evenodd" />
+    <circle cx="24" cy="24" r="20" fill="#232946" stroke="#6C63FF" strokeWidth="3" />
+    <ellipse cx="17" cy="22" rx="3" ry="4" fill="#fff" />
+    <ellipse cx="31" cy="22" rx="3" ry="4" fill="#fff" />
+    <ellipse cx="17" cy="23" rx="1.2" ry="2" fill="#6C63FF" />
+    <ellipse cx="31" cy="23" rx="1.2" ry="2" fill="#6C63FF" />
+    <path d="M18 31c1.5 2 6.5 2 8 0" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
+    <ellipse cx="24" cy="36" rx="2.5" ry="1" fill="#6C63FF" fillOpacity="0.5" />
+    <ellipse cx="24" cy="13" rx="7" ry="2.5" fill="#6C63FF" fillOpacity="0.2" />
   </svg>
 );
 
