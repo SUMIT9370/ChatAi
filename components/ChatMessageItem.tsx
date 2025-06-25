@@ -37,7 +37,7 @@ const ChatMessageItem: React.FC<ChatMessageItemProps> = ({ message, isActiveStre
         </div>
       )}
       <div className={`p-3 ${bubbleClasses}`}>
-        <div className="prose prose-sm prose-invert max-w-none whitespace-pre-wrap break-words">
+        <div className={`prose prose-sm prose-invert max-w-none whitespace-pre-wrap break-words ${!isUser ? 'font-bold font-serif' : ''}`} style={!isUser ? { fontFamily: 'Roboto Slab, serif' } : {}}>
           {renderTextWithLinks(message.text)}
         </div>
         {isActiveStreamTarget && <LoadingDots />}

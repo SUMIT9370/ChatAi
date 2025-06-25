@@ -23,6 +23,7 @@ const App: React.FC = () => {
   const [chatSession, setChatSession] = useState<Chat | null>(null);
   const [activeAiMessageId, setActiveAiMessageId] = useState<number | null>(null);
   const [showAbout, setShowAbout] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const apiKey = process.env.API_KEY;
   const [font, setFont] = useState(FONT_OPTIONS[0].value);
@@ -52,7 +53,7 @@ const App: React.FC = () => {
       setMessages([{
         id: Date.now(),
         role: MessageRole.AI,
-        text: "Hello! I'm your Gemini-powered assistant. How can I help you today?",
+        text: "Hello, I am ChatAi\nHow can I help you?",
         timestamp: new Date()
       }]);
       setError(null); 
@@ -137,9 +138,17 @@ const App: React.FC = () => {
 
   // Sidebar handlers
   const handleHome = () => window.location.reload();
-  const handleNewChat = () => setMessages([]);
+  const handleNewChat = () => setMessages([
+    {
+      id: Date.now(),
+      role: MessageRole.AI,
+      text: "Hello, I am ChatAi\nHow can I help you?",
+      timestamp: new Date()
+    }
+  ]);
   const handleAbout = () => setShowAbout(true);
   const handleCloseAbout = () => setShowAbout(false);
+  const handleToggleSidebar = () => setSidebarCollapsed((prev) => !prev);
 
   return (
     <div className="flex h-screen text-slate-100 font-sans relative" style={{
@@ -148,14 +157,14 @@ const App: React.FC = () => {
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
     }}>
-      <Sidebar onHome={handleHome} onNewChat={handleNewChat} onAbout={handleAbout} />
+      <Sidebar onHome={handleHome} onNewChat={handleNewChat} onAbout={handleAbout} collapsed={sidebarCollapsed} onToggle={handleToggleSidebar} />
       <div className="flex flex-col flex-1 h-full">
         {/* Topbar */}
-        <div className="fixed left-56 right-0 top-0 z-20 h-14 flex items-center justify-center bg-[#18181b]/80 backdrop-blur-md shadow-md">
+        <div className={`fixed ${sidebarCollapsed ? 'left-16' : 'left-56'} right-0 top-0 z-20 h-14 flex items-center justify-center bg-[#18181b]/80 backdrop-blur-md shadow-md transition-all duration-300`}>
           <span className="text-2xl font-bold tracking-wide text-white">ChatAi</span>
         </div>
         {showBannerError && (
-          <div className="bg-red-500 text-white p-3 text-center fixed left-56 right-0 top-14 z-30 flex justify-between items-center">
+          <div className={`bg-red-500 text-white p-3 text-center fixed ${sidebarCollapsed ? 'left-16' : 'left-56'} right-0 top-14 z-30 flex justify-between items-center transition-all duration-300`}>
             <p>{error}</p>
             <button 
               onClick={() => setError(null)} 
@@ -168,12 +177,12 @@ const App: React.FC = () => {
         )}
         <div 
           ref={chatContainerRef} 
-          className={`flex-grow p-6 overflow-y-auto space-y-4 pt-8 ${showBannerError ? 'mt-24' : 'mt-14'}`}
+          className={`flex-grow p-6 overflow-y-auto space-y-4 pt-8 ${showBannerError ? (sidebarCollapsed ? 'mt-24' : 'mt-24') : (sidebarCollapsed ? 'mt-14' : 'mt-14')}`}
         >
           {messages.length === 0 && !isLoading && (
             <div className="flex flex-col items-center justify-center h-full text-slate-400">
-              <h1 className="text-4xl font-medium text-slate-100">Hello, I'm Gemini</h1>
-              <p className="text-lg">How can I help you today?</p>
+              <h1 className="text-4xl font-medium text-slate-100">Hello, I am ChatAi</h1>
+              <p className="text-lg">How can I help you?</p>
             </div>
           )}
           {messages.map((msg) => (
@@ -193,6 +202,16 @@ const App: React.FC = () => {
         <div className="w-full flex justify-center items-center pb-2">
           <span className="text-xs text-slate-400 text-center">developed by SUMit</span>
         </div>
+        {/* Floating open sidebar button */}
+        {sidebarCollapsed && (
+          <button
+            className="fixed left-2 top-4 z-50 bg-[#23232a] text-white rounded-full w-10 h-10 flex items-center justify-center shadow-lg border border-[#23232a] hover:bg-[#18181b] transition-colors"
+            onClick={handleToggleSidebar}
+            aria-label="Open sidebar"
+          >
+            <span className="text-2xl">≡</span>
+          </button>
+        )}
       </div>
       {/* About Modal */}
       {showAbout && (
