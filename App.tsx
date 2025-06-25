@@ -5,6 +5,7 @@ import { ChatMessageData, MessageRole } from './types';
 import ChatMessageItem from './components/ChatMessageItem';
 import ChatInput from './components/ChatInput';
 import SparkleIcon from './components/icons/SparkleIcon';
+import Sidebar from './components/Sidebar';
 // LoadingDots is imported by ChatMessageItem and ChatInput if needed
 
 const BACKGROUND_IMAGE = '/brain-bg.jpg'; // Place the image in the public folder as brain-bg.jpg
@@ -21,6 +22,7 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [chatSession, setChatSession] = useState<Chat | null>(null);
   const [activeAiMessageId, setActiveAiMessageId] = useState<number | null>(null);
+  const [showAbout, setShowAbout] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const apiKey = process.env.API_KEY;
   const [font, setFont] = useState(FONT_OPTIONS[0].value);
@@ -133,58 +135,86 @@ const App: React.FC = () => {
   const errorAlreadyInLastMessage = error && lastMessage && lastMessage.role === MessageRole.AI && lastMessage.text.includes(error);
   const showBannerError = error && !errorAlreadyInLastMessage;
 
+  // Sidebar handlers
+  const handleHome = () => window.location.reload();
+  const handleNewChat = () => setMessages([]);
+  const handleAbout = () => setShowAbout(true);
+  const handleCloseAbout = () => setShowAbout(false);
+
   return (
-    <div className="flex flex-col h-screen text-slate-100 font-sans relative" style={{
+    <div className="flex h-screen text-slate-100 font-sans relative" style={{
       backgroundImage: `linear-gradient(rgba(19,19,20,0.92), rgba(19,19,20,0.92)), url('/brain-bg.jpg')`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
     }}>
-      {/* Topbar */}
-      <div className="fixed top-0 left-0 right-0 z-20 h-14 flex items-center justify-center bg-[#18181b]/80 backdrop-blur-md shadow-md">
-        <span className="text-2xl font-bold tracking-wide text-white">ChatAi</span>
-      </div>
-      {showBannerError && (
-        <div className="bg-red-500 text-white p-3 text-center fixed top-14 left-0 right-0 z-30 flex justify-between items-center">
-          <p>{error}</p>
-          <button 
-            onClick={() => setError(null)} 
-            className="ml-2 p-1 px-2 text-xs bg-red-700 hover:bg-red-800 rounded"
-            aria-label="Dismiss error"
-          >
-            Dismiss
-          </button>
+      <Sidebar onHome={handleHome} onNewChat={handleNewChat} onAbout={handleAbout} />
+      <div className="flex flex-col flex-1 h-full">
+        {/* Topbar */}
+        <div className="fixed left-56 right-0 top-0 z-20 h-14 flex items-center justify-center bg-[#18181b]/80 backdrop-blur-md shadow-md">
+          <span className="text-2xl font-bold tracking-wide text-white">ChatAi</span>
         </div>
-      )}
-
-      <div 
-        ref={chatContainerRef} 
-        className={`flex-grow p-6 overflow-y-auto space-y-4 pt-8 ${showBannerError ? 'mt-24' : 'mt-14'}`}
-      >
-        {messages.length === 0 && !isLoading && (
-          <div className="flex flex-col items-center justify-center h-full text-slate-400">
-            <h1 className="text-4xl font-medium text-slate-100">Hello, I'm Gemini</h1>
-            <p className="text-lg">How can I help you today?</p>
+        {showBannerError && (
+          <div className="bg-red-500 text-white p-3 text-center fixed left-56 right-0 top-14 z-30 flex justify-between items-center">
+            <p>{error}</p>
+            <button 
+              onClick={() => setError(null)} 
+              className="ml-2 p-1 px-2 text-xs bg-red-700 hover:bg-red-800 rounded"
+              aria-label="Dismiss error"
+            >
+              Dismiss
+            </button>
           </div>
         )}
-        {messages.map((msg) => (
-          <ChatMessageItem 
-            key={msg.id} 
-            message={msg} 
-            isActiveStreamTarget={msg.id === activeAiMessageId}
-          />
-        ))}
-        {isLoading && messages.length === 0 && !error && (
-             <div className="flex justify-center items-center h-full">
-                <p>Initializing AI, please wait...</p>
-             </div>
-        )}
+        <div 
+          ref={chatContainerRef} 
+          className={`flex-grow p-6 overflow-y-auto space-y-4 pt-8 ${showBannerError ? 'mt-24' : 'mt-14'}`}
+        >
+          {messages.length === 0 && !isLoading && (
+            <div className="flex flex-col items-center justify-center h-full text-slate-400">
+              <h1 className="text-4xl font-medium text-slate-100">Hello, I'm Gemini</h1>
+              <p className="text-lg">How can I help you today?</p>
+            </div>
+          )}
+          {messages.map((msg) => (
+            <ChatMessageItem 
+              key={msg.id} 
+              message={msg} 
+              isActiveStreamTarget={msg.id === activeAiMessageId}
+            />
+          ))}
+          {isLoading && messages.length === 0 && !error && (
+               <div className="flex justify-center items-center h-full">
+                  <p>Initializing AI, please wait...</p>
+               </div>
+          )}
+        </div>
+        <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading} />
+        <div className="w-full flex justify-center items-center pb-2">
+          <span className="text-xs text-slate-400 text-center">developed by SUMit</span>
+        </div>
       </div>
-
-      <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading} />
-      <div className="w-full flex justify-center items-center pb-2">
-        <span className="text-xs text-slate-400 text-center">developed by SUMit</span>
-      </div>
+      {/* About Modal */}
+      {showAbout && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
+          <div className="bg-[#23232a] rounded-lg shadow-lg p-8 max-w-sm w-full text-center">
+            <h2 className="text-xl font-bold mb-2">About</h2>
+            <p className="mb-4 text-sm text-slate-300">This app has been developed by <span className="font-semibold">Excel</span>.<br/>You can reload the site or start a new chat from the sidebar.</p>
+            <button
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded mr-2"
+              onClick={handleHome}
+            >
+              Reload Site
+            </button>
+            <button
+              className="bg-slate-600 hover:bg-slate-700 text-white px-4 py-2 rounded"
+              onClick={handleCloseAbout}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
