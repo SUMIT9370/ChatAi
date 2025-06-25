@@ -11,7 +11,39 @@
 
 This project provides a friendly chat interface with support for streaming AI responses, theming, and a responsive layout. The codebase is cleanly structured and leverages React best practices.
 
-### Features
+---
+
+## About the Developer
+
+<img src="![image3](image3)" alt="Sumit Patil Profile Screenshot" style="max-width: 600px; border-radius: 10px; margin-bottom: 1rem;" />
+
+**Sumit Patil**  
+Web Developer | AI Enthusiast  
+
+- [X](https://x.com/)
+- [LinkedIn](https://www.linkedin.com/in/sumit-patil-582877240/)
+- [GitHub](https://github.com/SUMIT9370)
+- [LeetCode](https://leetcode.com/)
+
+This chat application was built as a modern, responsive AI chat interface using the following technologies:
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- Google Gemini API
+- Modern CSS
+
+For more details or to connect, use the links above!
+
+### Screenshots
+
+| Chat Home | Fun Fact Example | About Page | Empty Chat |
+|-----------|------------------|------------|------------|
+| ![image1](image1) | ![image2](image2) | ![image3](image3) | ![image4](image4) |
+
+---
+
+## Features
 
 - **Fast, reactive UI** powered by Vite and React.
 - **Beautiful design** using Tailwind CSS and custom fonts.
@@ -83,11 +115,6 @@ yarn preview
 - **Change fonts/background:** Edit `App.tsx` for font selection and background image.
 - **Edit About page:** Update `components/AboutPage.tsx` for developer info or technologies.
 - **Add new AI models:** Update model name in `App.tsx` where `GoogleGenAI` is initialized.
-
-## About the Developer
-
-Created by [Sumit Patil](https://www.linkedin.com/in/sumit-patil-582877240/), a web developer and AI enthusiast.  
-More info and links on the About page of the app!
 
 ---
 
