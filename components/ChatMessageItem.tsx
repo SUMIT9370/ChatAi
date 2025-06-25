@@ -1,7 +1,7 @@
 import React from 'react';
 import { ChatMessageData, MessageRole } from '../types';
 import UserIcon from './icons/UserIcon';
-import SparkleIcon from './icons/SparkleIcon';
+import CircleIcon from './icons/CircleIcon';
 import LoadingDots from './LoadingDots';
 
 interface ChatMessageItemProps {
@@ -33,11 +33,11 @@ const ChatMessageItem: React.FC<ChatMessageItemProps> = ({ message, isActiveStre
     <div className={`flex items-start space-x-3 ${containerClasses}`}>
       {!isUser && (
         <div className="w-8 h-8 flex-shrink-0">
-          <SparkleIcon className="w-8 h-8 text-blue-400" />
+          <CircleIcon className="w-8 h-8" />
         </div>
       )}
       <div className={`p-3 ${bubbleClasses}`}>
-        <div className={`prose prose-sm prose-invert max-w-none whitespace-pre-wrap break-words ${!isUser ? 'font-bold font-serif' : ''}`} style={!isUser ? { fontFamily: 'Roboto Slab, serif' } : {}}>
+        <div className={`prose prose-sm prose-invert max-w-none whitespace-pre-wrap break-words ${!isUser ? '' : ''}`} style={!isUser ? { fontFamily: 'Segoe UI, Roboto, Open Sans, sans-serif', fontSize: '1.15rem' } : {}}>
           {renderTextWithLinks(message.text)}
         </div>
         {isActiveStreamTarget && <LoadingDots />}
